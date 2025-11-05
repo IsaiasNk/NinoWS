@@ -1,0 +1,19 @@
+body {
+    background-color: darkred;
+}
+
+.navbar {
+  background-color: rgb(26, 24, 24) 
+}
+
+.navbar .nav-link {
+  color: white !important; /* Cambia el color de los enlaces */
+}
+
+.navbar .nav-link:hover {
+  color: #dd4f4f !important; /* Color al pasar el mouse */
+}
+
+.navbar-brand {
+    color: #dd4f4f;
+}
