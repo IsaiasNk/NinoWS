@@ -1,19 +1,43 @@
-let cantidad = prompt("Ingrese la cantidad de unidades que desea comprar:");
-cantidad = Number(cantidad);
-let precioUnitario = 100; // por ejemplo
-let descuento = 0;
-if (cantidad > 100) {
-  descuento = 0.20;
-} else if (cantidad > 50) {
-  descuento = 0.15;
-} else if (cantidad > 20) {
-  descuento = 0.10;
-} else {
-  descuento = 0;
+
+
+alert("Bienvenido a la Tienda JS!");
+let nombre = prompt("¿Cuál es tu nombre?");
+alert("Hola " + nombre + ", veamos qué querés comprar hoy.");
+
+
+let seguirComprando = true;
+let total = 0;
+
+
+function sumar(precio1, precio2) {
+  return precio1 + precio2;
 }
-let total = cantidad * precioUnitario;
-let totalConDescuento = total - (total * descuento);
-console.log("Cantidad: " + cantidad);
-console.log("Precio unitario: $" + precioUnitario);
-console.log("Descuento aplicado: " + (descuento * 100) + "%");
-console.log("Total a pagar: $" + totalConDescuento);
+
+
+while (seguirComprando) {
+ 
+  let opcion = prompt(
+    "Elige un producto:\n1 - Camiseta ($5000)\n2 - Gorra ($3000)\n3 - Zapatillas ($10000)\n4 - Salir"
+  );
+
+  
+  if (opcion === "1") {
+    alert("Agregaste una Camiseta al carrito");
+    total = sumar(total, 5000);
+  } else if (opcion === "2") {
+    alert("Agregaste una Gorra al carrito");
+    total = sumar(total, 3000);
+  } else if (opcion === "3") {
+    alert("Agregaste unas Zapatillas al carrito");
+    total = sumar(total, 10000);
+  } else if (opcion === "4") {
+    alert("Gracias por tu compra, " + nombre + "!");
+    seguirComprando = false;
+  } else {
+    alert("Opción no válida, por favor elegí otra.");
+  }
+}
+
+alert("El total de tu compra es $" + total);
+console.log("Cliente: " + nombre);
+console.log("Total a pagar: $" + total);
