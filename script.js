@@ -1,6 +1,6 @@
 
 
-alert("Bienvenido a la Tienda JS!");
+alert("Bienvenido a la Tienda NinoWS!");
 let nombre = prompt("¿Cuál es tu nombre?");
 alert("Hola " + nombre + ", veamos qué querés comprar hoy.");
 
