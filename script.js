@@ -1,43 +1,72 @@
 
-
 alert("Bienvenido a la Tienda NinoWS!");
+
 let nombre = prompt("¿Cuál es tu nombre?");
-alert("Hola " + nombre + ", veamos qué querés comprar hoy.");
+alert("Hola " + nombre);
 
-
-let seguirComprando = true;
+// Carrito desde localStorage o vacío
+let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 let total = 0;
 
+// DOM
+const listaCarrito = document.getElementById("carrito");
+const totalSpan = document.getElementById("total");
 
-function sumar(precio1, precio2) {
-  return precio1 + precio2;
+// Productos
+const productos = {
+  remera: { nombre: "Remera", precio: 5000 },
+  gorra: { nombre: "Gorra", precio: 3000 },
+  zapatillas: { nombre: "Zapatillas", precio: 10000 },
+};
+
+// Mostrar carrito
+function renderCarrito() {
+  listaCarrito.innerHTML = "";
+  total = 0;
+
+ carrito.forEach((prod, index) => {
+  const li = document.createElement("li");
+li.innerHTML = `
+  ${prod.nombre} - $${prod.precio}
+  <button class="btn btn-sm btn-outline-danger ms-2">X</button>
+`;
+
+li.querySelector("button").addEventListener("click", () => {
+  carrito.splice(index, 1);
+  renderCarrito();
+});
+
+listaCarrito.appendChild(li);
+
+    total += prod.precio;
+  });
+
+  totalSpan.textContent = total;
+  localStorage.setItem("carrito", JSON.stringify(carrito));
 }
 
+// Eventos
+document.getElementById("remera").addEventListener("click", () => {
+  carrito.push(productos.remera);
+  renderCarrito();
+});
 
-while (seguirComprando) {
- 
-  let opcion = prompt(
-    "Elige un producto:\n1 - Camiseta ($5000)\n2 - Gorra ($3000)\n3 - Zapatillas ($10000)\n4 - Salir"
-  );
+document.getElementById("gorra").addEventListener("click", () => {
+  carrito.push(productos.gorra);
+  renderCarrito();
+});
 
-  
-  if (opcion === "1") {
-    alert("Agregaste una Camiseta al carrito");
-    total = sumar(total, 5000);
-  } else if (opcion === "2") {
-    alert("Agregaste una Gorra al carrito");
-    total = sumar(total, 3000);
-  } else if (opcion === "3") {
-    alert("Agregaste unas Zapatillas al carrito");
-    total = sumar(total, 10000);
-  } else if (opcion === "4") {
-    alert("Gracias por tu compra, " + nombre + "!");
-    seguirComprando = false;
-  } else {
-    alert("Opción no válida, por favor elegí otra.");
-  }
-}
+document.getElementById("zapatillas").addEventListener("click", () => {
+  carrito.push(productos.zapatillas);
+  renderCarrito();
+});
 
-alert("El total de tu compra es $" + total);
-console.log("Cliente: " + nombre);
-console.log("Total a pagar: $" + total);
+// Inicializar
+renderCarrito();
+
+document.getElementById("vaciar").addEventListener("click", () => {
+  carrito = [];
+  localStorage.removeItem("carrito");
+  renderCarrito();
+});
+
