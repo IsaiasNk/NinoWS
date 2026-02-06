@@ -1,72 +1,205 @@
+document.addEventListener("DOMContentLoaded", () => {
 
-alert("Bienvenido a la Tienda NinoWS!");
+  /* DATOS */
 
-let nombre = prompt("¿Cuál es tu nombre?");
-alert("Hola " + nombre);
+  const servicios = [
+    { id: 1, nombre: "Chatbot WhatsApp Básico", precio: 15000, categoria: "chatbot", descripcion: "Automatización básica." },
+    { id: 2, nombre: "Chatbot WhatsApp Avanzado", precio: 30000, categoria: "chatbot", descripcion: "IA y flujos avanzados." },
+    { id: 3, nombre: "Página Web Estática", precio: 25000, categoria: "web", descripcion: "Web moderna y responsive." },
+    { id: 4, nombre: "Página Web Dinámica", precio: 45000, categoria: "web", descripcion: "JS y lógica avanzada." },
+    { id: 5, nombre: "Corrección de Errores Web", precio: 12000, categoria: "web", descripcion: "Solución de bugs." },
+    { id: 6, nombre: "Mantenimiento Mensual", precio: 10000, categoria: "web", descripcion: "Soporte continuo." },
+    { id: 7, nombre: "Optimización Web", precio: 18000, categoria: "web", descripcion: "Mejor rendimiento." }
+  ];
 
-// Carrito desde localStorage o vacío
-let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-let total = 0;
+  let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
-// DOM
-const listaCarrito = document.getElementById("carrito");
-const totalSpan = document.getElementById("total");
+  const contenedor = document.getElementById("contenedorServicios");
+  const carritoItems = document.getElementById("carritoItems");
+  const totalCarrito = document.getElementById("totalCarrito");
+  const btnVaciar = document.getElementById("vaciarCarrito");
+  const btnComprar = document.getElementById("btnComprar");
+  const contadorCarrito = document.getElementById("contadorCarrito");
 
-// Productos
-const productos = {
-  remera: { nombre: "Remera", precio: 5000 },
-  gorra: { nombre: "Gorra", precio: 3000 },
-  zapatillas: { nombre: "Zapatillas", precio: 10000 },
-};
+  /* CONTADOR + ANIMACIÓN */
 
-// Mostrar carrito
-function renderCarrito() {
-  listaCarrito.innerHTML = "";
-  total = 0;
+  function actualizarContador(animar = false) {
+    const totalCantidad = carrito.reduce((acc, item) => acc + item.cantidad, 0);
+    contadorCarrito.textContent = totalCantidad;
 
- carrito.forEach((prod, index) => {
-  const li = document.createElement("li");
-li.innerHTML = `
-  ${prod.nombre} - $${prod.precio}
-  <button class="btn btn-sm btn-outline-danger ms-2">X</button>
-`;
+    if (animar) {
+      contadorCarrito.classList.remove("pop");
+      void contadorCarrito.offsetWidth; // reflow
+      contadorCarrito.classList.add("pop");
+    }
+  }
 
-li.querySelector("button").addEventListener("click", () => {
-  carrito.splice(index, 1);
-  renderCarrito();
-});
+  /* RENDER SERVICIOS */
 
-listaCarrito.appendChild(li);
+  function renderServicios(lista) {
+    contenedor.innerHTML = "";
 
-    total += prod.precio;
+    lista.forEach(servicio => {
+      const col = document.createElement("div");
+      col.className = "col-md-4";
+
+      col.innerHTML = `
+        <div class="servicio-card">
+          <h5>${servicio.nombre}</h5>
+          <p class="servicio-precio">$${servicio.precio}</p>
+
+          <button data-id="${servicio.id}">
+            Comprar $${servicio.precio}
+          </button>
+
+          <div class="servicio-descripcion">
+            <p>${servicio.descripcion}</p>
+          </div>
+        </div>
+      `;
+
+      contenedor.appendChild(col);
+    });
+
+    activarBotonesCompra();
+  }
+
+  /* AGREGAR AL CARRITO (SIN DUPLICADOS) */
+
+  function activarBotonesCompra() {
+    document.querySelectorAll(".servicio-card button").forEach(btn => {
+      btn.addEventListener("click", e => {
+        const id = Number(e.target.dataset.id);
+        const servicio = servicios.find(s => s.id === id);
+
+        const existente = carrito.find(item => item.id === id);
+
+        if (existente) {
+          existente.cantidad++;
+        } else {
+          carrito.push({ ...servicio, cantidad: 1 });
+        }
+
+        guardarCarrito();
+        renderCarrito();
+        actualizarContador(true);
+
+        Swal.fire({
+          icon: "success",
+          title: "Servicio agregado",
+          text: `${servicio.nombre} fue añadido al carrito`,
+          timer: 1300,
+          showConfirmButton: false
+        });
+      });
+    });
+  }
+
+  /* CARRITO */
+
+  function renderCarrito() {
+    carritoItems.innerHTML = "";
+
+    if (carrito.length === 0) {
+      carritoItems.innerHTML = "<p>Carrito vacío</p>";
+      totalCarrito.textContent = "";
+      actualizarContador();
+      return;
+    }
+
+    let total = 0;
+
+    carrito.forEach(servicio => {
+      total += servicio.precio * servicio.cantidad;
+
+      const div = document.createElement("div");
+      div.className = "item-carrito";
+
+      div.innerHTML = `
+        <span>
+          ${servicio.nombre} 
+          x${servicio.cantidad} 
+          - $${servicio.precio * servicio.cantidad}
+        </span>
+        <button class="btn-x" data-id="${servicio.id}">✕</button>
+      `;
+
+      carritoItems.appendChild(div);
+    });
+
+    totalCarrito.textContent = `Total: $${total}`;
+
+    document.querySelectorAll(".btn-x").forEach(btn => {
+      btn.addEventListener("click", e => {
+        const id = Number(e.target.dataset.id);
+        carrito = carrito.filter(item => item.id !== id);
+        guardarCarrito();
+        renderCarrito();
+        actualizarContador();
+      });
+    });
+  }
+
+  btnVaciar.addEventListener("click", () => {
+    carrito = [];
+    guardarCarrito();
+    renderCarrito();
+    actualizarContador();
   });
 
-  totalSpan.textContent = total;
-  localStorage.setItem("carrito", JSON.stringify(carrito));
-}
+  /* COMPRAR */
 
-// Eventos
-document.getElementById("remera").addEventListener("click", () => {
-  carrito.push(productos.remera);
+  btnComprar.addEventListener("click", () => {
+
+    if (carrito.length === 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "Carrito vacío",
+        text: "Agregá al menos un servicio"
+      });
+      return;
+    }
+
+    Swal.fire({
+      icon: "success",
+      title: "Compra realizada con éxito",
+      text: "Gracias por confiar en NinoWS 💻🚀"
+    });
+
+    carrito = [];
+    guardarCarrito();
+    renderCarrito();
+    actualizarContador();
+  });
+
+  function guardarCarrito() {
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+  }
+
+  /* FILTROS */
+
+  document.querySelectorAll(".filtros button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".filtros button")
+        .forEach(b => b.classList.remove("activo"));
+
+      btn.classList.add("activo");
+
+      const texto = btn.textContent;
+
+      if (texto === "Todos") {
+        renderServicios(servicios);
+      } else if (texto === "Web") {
+        renderServicios(servicios.filter(s => s.categoria === "web"));
+      } else {
+        renderServicios(servicios.filter(s => s.categoria === "chatbot"));
+      }
+    });
+  });
+
+  /* INIT */
+
+  renderServicios(servicios);
   renderCarrito();
+  actualizarContador();
 });
-
-document.getElementById("gorra").addEventListener("click", () => {
-  carrito.push(productos.gorra);
-  renderCarrito();
-});
-
-document.getElementById("zapatillas").addEventListener("click", () => {
-  carrito.push(productos.zapatillas);
-  renderCarrito();
-});
-
-// Inicializar
-renderCarrito();
-
-document.getElementById("vaciar").addEventListener("click", () => {
-  carrito = [];
-  localStorage.removeItem("carrito");
-  renderCarrito();
-});
-
