@@ -9,8 +9,9 @@ main {
 }
 
 .navbar {
-  background-color: rgb(26, 24, 24) 
+  background: rgba(0,0,0,0.85) !important;
 }
+
 
 .navbar .nav-link {
   color: white !important; /* Cambia el color de los enlaces */
@@ -194,37 +195,39 @@ main {
 }
 
 /* HERO */
+
 .hero {
   min-height: 90vh;
+  width: 100%;
   background: linear-gradient(rgba(0,0,0,.8), rgba(0,0,0,.9)),
-              url("../img/hero-bg.jpg") center/cover no-repeat;
+  url("") center/cover no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   color: var(--light);
+  padding: 60px 20px;
 }
 
+/* CONTENEDOR INTERNO DEL HERO */
+.hero-content {
+  max-width: 900px;
+  margin: auto;
+}
+
+/* TITULO */
 .hero h1 {
   font-size: 3rem;
   font-weight: bold;
 }
 
-.hero h1 span {
-  color: var(--main-color);
-}
-
+/* SUBTITULO */
 .hero p {
   margin: 20px 0;
   font-size: 1.2rem;
   opacity: 0.9;
 }
 
-.hero-buttons {
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-}
 
 /* BOTONES */
 .btn-primary {
@@ -252,7 +255,10 @@ main {
 .home-section {
   padding: 80px 10%;
   text-align: center;
+  background: transparent;
+  color: white;
 }
+
 
 .home-section.dark {
   background-color: var(--dark);
@@ -283,6 +289,24 @@ main {
   transform: translateY(-5px);
 }
 
+/* SOLO HOME */
+.home-body main {
+  padding: 40px 15px;
+  background: transparent;
+}
+
+.home-body .home-section,
+.home-body .cta {
+  max-width: 1200px;
+  margin: 40px auto;
+  border-radius: 20px;
+  padding: 60px 40px;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 0 40px rgba(0,0,0,0.6);
+}
+
+
 /* BENEFICIOS */
 .beneficios {
   list-style: none;
@@ -301,6 +325,13 @@ main {
   text-align: center;
   padding: 70px 20px;
 }
+
+
+.cta a {
+  display: inline-block;
+  margin-top: 25px;
+}
+
 
 @media (max-width: 768px) {
 
@@ -351,3 +382,25 @@ html, body {
     padding-right: 20px;
   }
 }
+
+
+/* FONDO SOLO HOME */
+body {
+  background: url("../images/142875-color-red-technology-light-graphics-x750.jpg") no-repeat center center fixed;
+  background-size: cover;
+}
+
+
+
+
+/* MENU MOBILE SIMPLE */
+.offcanvas {
+  background-color: #111 !important;
+}
+
+.offcanvas .nav-link {
+  color: white !important;
+  font-size: 18px;
+}
+
+
